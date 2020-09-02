@@ -1,6 +1,10 @@
 package basic.control;
 
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
@@ -49,12 +53,51 @@ public class InputController implements Initializable {
 	public void handleBtnRegAction() {
 		if (txtTitle.getText() == null || txtTitle.getText().equals("")) {
 			showPopup("타이틀을 입력하세요!!");
-		} else if(txtPassword.getText() == null || txtPassword.getText().equals("")) {
-			showPopup("비밀번호를 입력하세요!!");			
-		} else if(comboPublic.getValue() == null || comboPublic.getValue().equals("")) {
+		} else if (txtPassword.getText() == null || txtPassword.getText().equals("")) {
+			showPopup("비밀번호를 입력하세요!!");
+		} else if (comboPublic.getValue() == null || comboPublic.getValue().equals("")) {
 			showPopup("공개여부를 지정하세요!!");
-		} else if(dateExit.getValue() == null) {
+		} else if (dateExit.getValue() == null) {
 			showCustomDialog("날짜를 입력하세요.");
+		} else {
+			// 등록코드
+			insetData();
+		}
+	}
+
+	private void insetData() {
+		String url = "jdbc:oracle:thin:@localhost:1521:xe";
+		String user = "hr", passwd = "hr";
+		Connection conn = null;
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+
+			conn = DriverManager.getConnection(url, user, passwd);
+
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		String sql = "insert into new_board values(?,?,?,?,?)";
+
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, txtTitle.getText());
+			pstmt.setString(2, txtPassword.getText());
+			pstmt.setString(3, comboPublic.getValue());
+			pstmt.setString(4, dateExit.getValue().toString());
+			pstmt.setString(5, txtContent.getText());
+
+			int r = pstmt.executeUpdate();
+			System.out.println(r + " 건 입력됨.");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+
+			}
 		}
 	}
 
@@ -83,7 +126,7 @@ public class InputController implements Initializable {
 		label.setLayoutX(87);
 		label.setLayoutY(33);
 		label.setPrefSize(290, 15);
-		
+
 		ap.getChildren().addAll(iv, btnOk, label);
 
 		Scene scene = new Scene(ap);
