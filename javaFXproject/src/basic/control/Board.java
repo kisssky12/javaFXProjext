@@ -3,6 +3,7 @@ package basic.control;
 import javafx.beans.property.SimpleStringProperty;
 
 public class Board {
+
 	private SimpleStringProperty title;
 	private SimpleStringProperty password;
 	private SimpleStringProperty publicity;
@@ -17,7 +18,6 @@ public class Board {
 		this.content = new SimpleStringProperty(content);
 	}
 
-	////////////////////////////////////////////////////////////
 	public String getTitle() {
 		return this.title.get();
 	}
@@ -30,56 +30,52 @@ public class Board {
 		return this.title;
 	}
 
-	////////////////////////////////////////////////////////////
 	public String getPassword() {
 		return this.password.get();
 	}
 
 	public void setPassword(String password) {
-		this.title.set(password);
-		;
+		this.password.set(password);
 	}
 
 	public SimpleStringProperty passwordProperty() {
 		return this.password;
 	}
 
-	////////////////////////////////////////////////////////////
 	public String getPublicity() {
 		return this.publicity.get();
 	}
 
 	public void setPublicity(String publicity) {
-		this.title.set(publicity);
+		this.publicity.set(publicity);
 	}
 
-	public SimpleStringProperty publicityProperty() {
+	public SimpleStringProperty publicitydProperty() {
 		return this.publicity;
 	}
 
-	////////////////////////////////////////////////////////////
 	public String getExitDate() {
 		return this.exitDate.get();
 	}
 
 	public void setExitDate(String exitDate) {
-		this.title.set(exitDate);
+		this.exitDate.set(exitDate);
 	}
 
-	public SimpleStringProperty exitDate() {
+	public SimpleStringProperty exitDatedProperty() {
 		return this.exitDate;
 	}
 
-	////////////////////////////////////////////////////////////
 	public String getContent() {
 		return this.content.get();
 	}
 
 	public void setContent(String content) {
-		this.title.set(content);
+		this.content.set(content);
 	}
 
 	public SimpleStringProperty contentProperty() {
 		return this.content;
 	}
+
 }

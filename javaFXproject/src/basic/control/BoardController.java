@@ -14,8 +14,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -23,6 +23,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class BoardController implements Initializable {
+
 	@FXML
 	TableView<Board> boardView;
 	@FXML
@@ -33,39 +34,38 @@ public class BoardController implements Initializable {
 	TextField txtExitDate;
 	@FXML
 	TextArea txtContent;
+	@FXML
+	Button btnNext, btnPrev;
 
 	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) {
+	public void initialize(URL location, ResourceBundle resources) {
 
-		TableColumn<Board, String> tcTitle = new TableColumn<>("제목");
-		tcTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
+		TableColumn<Board, String> tcTitle = new TableColumn<>("제목"); // 보여지는 이름
+		tcTitle.setCellValueFactory(new PropertyValueFactory<>("title")); // 칼럼이름
 		tcTitle.setPrefWidth(80);
-		boardView.getColumns().add(tcTitle);
-
-		TableColumn<Board, String> tcPublicity = new TableColumn<>("공개여부");
-		tcPublicity.setCellValueFactory(new PropertyValueFactory<>("Publicity"));
-		tcPublicity.setPrefWidth(80);
-		boardView.getColumns().add(tcPublicity);
-
+		boardView.getColumns().add(tcTitle); // boardView에 만든 타이틀 칼럼 붙여줌
 		boardView.setItems(getBoardList());
 
-		boardView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Board>() {
+		TableColumn<Board, String> tcPublicity = new TableColumn<>("공개여부");
+		tcPublicity.setCellValueFactory(new PropertyValueFactory<>("publicity"));
+		tcPublicity.setPrefWidth(80);
+		boardView.getColumns().add(tcPublicity);
+		boardView.setItems(getBoardList());
 
+		// 리스트 클릭하면 옆에 상세내용 나오게 하기
+		boardView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Board>() {
 			@Override
-			public void changed(ObservableValue<? extends Board> arg0, Board o, Board n) {
+			public void changed(ObservableValue<? extends Board> observable, Board o, Board n) {
 				txtTitle.setText(n.getTitle());
 				comboPublic.setValue(n.getPublicity());
 				txtExitDate.setText(n.getExitDate());
 				txtContent.setText(n.getContent());
-
 			}
-
 		});
-
 	}
 
-	// db연동
 	public ObservableList<Board> getBoardList() {
+
 		String url = "jdbc:oracle:thin:@localhost:1521:xe";
 		String user = "hr", passwd = "hr";
 		Connection conn = null;
@@ -73,26 +73,23 @@ public class BoardController implements Initializable {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 			conn = DriverManager.getConnection(url, user, passwd);
 		} catch (ClassNotFoundException | SQLException e) {
-
 			e.printStackTrace();
 		}
 
 		String sql = "select * from new_board order by 1";
 		ObservableList<Board> list = FXCollections.observableArrayList();
+		// sql 결과물을 list에 담을거야
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
-				// 컬럼 이름
 				Board board = new Board(rs.getString("title"), rs.getString("password"), rs.getString("publicity"),
-						rs.getString("exit_date"), rs.getString("content"));
+						rs.getString("exit_Date"), rs.getString("content"));
 				list.add(board);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		return list;
 	}
 

@@ -26,8 +26,8 @@
 				<VBox prefHeight="100" prefWidth="100" spacing="20"
 					alignment="CENTER_LEFT">
 					<children>
-						<CheckBox fx:id="chk1" text="안경" onAction="#handleChkAction" />
-						<CheckBox fx:id="chk2" text="모자" onAction="#handleChkAction" />
+						<CheckBox fx:id="chk1" text="안경" #on />
+						<CheckBox fx:id="chk2" text="모자"  />
 					</children>
 				</VBox>
 
@@ -66,7 +66,7 @@
 		</HBox>
 	</center>
 	<bottom>
-		<Button fx:id="btwExit" BorderPane.alignment="CENTER">
+		<Button fx:id="btnExit" BorderPane.alignment="CENTER">
 			<graphic>
 				<ImageView>
 					<Image url="/basic/images/exit.png"></Image>

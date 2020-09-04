@@ -1,22 +1,21 @@
-package basic.control;
+package basic.control.chart;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
-//UI : Button.fxml
-//Controller : ButtonController.java
-public class ButtonExample extends Application {
+public class ChartExample extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		BorderPane root = FXMLLoader.load(getClass().getResource("Button.fxml")); // FXML파일 읽어오기
+		HBox a = FXMLLoader.load(getClass().getResource("ChartControl.fxml"));
 
-		Scene scene = new Scene(root);
+		Scene scene = new Scene(a);
 		primaryStage.setScene(scene);
 		primaryStage.show();
+
 	}
 
 	public static void main(String[] args) {

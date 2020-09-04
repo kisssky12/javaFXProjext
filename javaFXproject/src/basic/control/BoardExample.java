@@ -6,19 +6,25 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
-// UI : BoardControl.fxml
+//ui : BoardControl.fxml
+// control : BoardCotroller.java
+// Board.java
+
 public class BoardExample extends Application {
 
-   @Override
-   public void start(Stage primaryStage) throws Exception {
-      // TODO Auto-generated method stub
-      AnchorPane ap = FXMLLoader.load(this.getClass().getResource("BoardControl.fxml"));
-      Scene scene = new Scene(ap);
-      primaryStage.setScene(scene);
-      primaryStage.show();
-   }
-   
-   public static void main(String[] args) {
-      launch(args);
-   }
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+
+		AnchorPane a = FXMLLoader.load(getClass().getResource("BoardControl.fxml"));
+
+		Scene scene = new Scene(a);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+
+	}
+
+	public static void main(String[] args) {
+		Application.launch(args);
+	}
+
 }
