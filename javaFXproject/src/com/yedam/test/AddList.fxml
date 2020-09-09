@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="237.0" prefWidth="238.0" 
+xmlns="http://javafx.com/javafx/8" 
+xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <AnchorPane prefHeight="272.0" prefWidth="238.0">
+         <children>
+            <HBox layoutX="68.0" layoutY="211.0" prefHeight="23.0" prefWidth="102.0" spacing="20">
+               <children>
+                  <Button id="btnFormAdd" text="저장" />
+                  <Button id="btnFormCancel" text="취소" />
+               </children>
+            </HBox>
+         </children>
+      </AnchorPane>
+      <GridPane hgap="10" layoutX="25.0" layoutY="33.0" prefHeight="122.0" prefWidth="213.0" vgap="10">
+         <children>
+            <Label contentDisplay="CENTER" prefWidth="50" text="이름" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <Label contentDisplay="CENTER" prefWidth="50.0" text="나이" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <Label contentDisplay="CENTER" prefWidth="50" text="주소" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <Label contentDisplay="CENTER" prefWidth="50" text="키" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <Label contentDisplay="CENTER" prefWidth="50" text="몸무게" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+            <TextField id="txtName" prefHeight="19.0" prefWidth="122.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <TextField id="txtAge" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField id="txtAddress" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField id="txtHeight" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField id="txtWeight" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+         </children>
+         <columnConstraints>
+            <ColumnConstraints maxWidth="84.0" minWidth="50.0" prefWidth="50.0" />
+            <ColumnConstraints maxWidth="122.0" minWidth="88.0" prefWidth="122.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
+      </GridPane>
+   </children>
+</AnchorPane>

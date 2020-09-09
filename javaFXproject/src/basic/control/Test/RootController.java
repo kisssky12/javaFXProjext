@@ -27,7 +27,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class RootControllerTest implements Initializable {
+public class RootController implements Initializable {
 	@FXML
 	TableView<Student> tableView;
 	@FXML
@@ -44,20 +44,16 @@ public class RootControllerTest implements Initializable {
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 
-		TableColumn<Student, ?> 
-		tc = tableView.getColumns().get(0);
-		tc.setCellValueFactory(new PropertyValueFactory<>("id"));
-		
-		tc = tableView.getColumns().get(1);
+		TableColumn<Student, ?> tc = tableView.getColumns().get(0);
 		tc.setCellValueFactory(new PropertyValueFactory<>("name"));
-		
-		tc = tableView.getColumns().get(2);
+
+		tc = tableView.getColumns().get(1);
 		tc.setCellValueFactory(new PropertyValueFactory<>("korean"));
 
-		tc = tableView.getColumns().get(3);
+		tc = tableView.getColumns().get(2);
 		tc.setCellValueFactory(new PropertyValueFactory<>("math"));
 
-		tc = tableView.getColumns().get(4);
+		tc = tableView.getColumns().get(3);
 		tc.setCellValueFactory(new PropertyValueFactory<>("english"));
 
 		// 성적저장.
@@ -101,12 +97,8 @@ public class RootControllerTest implements Initializable {
 		AnchorPane ap = new AnchorPane();
 		ap.setPrefSize(210, 230);
 		
-		Label lId, lKorean, lMath, lEnglish;
-		TextField tId, tName, tKorean, tMath, tEnglish;
-		
-		lId = new Label("아이디");
-		lId.setLayoutX(35);
-		lId.setLayoutY(73);
+		Label lKorean, lMath, lEnglish;
+		TextField tName, tKorean, tMath, tEnglish;
 		
 		lKorean = new Label("국어");
 		lKorean.setLayoutX(35);
@@ -127,11 +119,6 @@ public class RootControllerTest implements Initializable {
 		
 		tName.setText(name);
 		tName.setEditable(false);
-	
-		tId = new TextField();
-		tId.setPrefWidth(110);
-		tId.setLayoutX(72);
-		tId.setLayoutY(69);
 		
 		tKorean = new TextField();
 		tKorean.setPrefWidth(110);
@@ -209,16 +196,6 @@ public class RootControllerTest implements Initializable {
 			
 			// chart를 가지고 와서 series를 추가해야한다.
 			BarChart barChart = (BarChart) chart.lookup("#barChart");
-			
-			//국어 카테고리
-			XYChart.Series<String, Integer> seriesK = new XYChart.Series<String, Integer>();
-			seriesK.setName("국어");
-			
-			ObservableList<XYChart.Data<String, Integer>> koreanList = FXCollections.observableArrayList();
-			
-			for(int i=0; i<list.size(); i++) {
-				koreanList.add(new XYChart.Data<>(list.get(i).getName(), list.get(i).getKorean()));
-			}
 			
 			//국어 카테고리
 			XYChart.Series<String, Integer> seriesK = new XYChart.Series<String, Integer>();

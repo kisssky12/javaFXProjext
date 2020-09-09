@@ -35,8 +35,8 @@ public class ChartController implements Initializable {
 //      list.add(new PieChart.Data("JavaFX", 35));
       pieChart.setData(list);
       
-      barChart.getData().add(s1);
-      barChart.getData().add(s2);
+//      barChart.getData().add(s1);
+//      barChart.getData().add(s2);
       
       
       XYChart.Series<String, Integer> s1 = new XYChart.Series<>();
@@ -47,8 +47,8 @@ public class ChartController implements Initializable {
       s2.setData(getSeries2());
       s2.setName("여자");
       
-      areaChart.getData().add(s3);
-      areaChart.getData().add(s4);
+//      areaChart.getData().add(s3);
+//      areaChart.getData().add(s4);
     
       XYChart.Series<String, Integer> s3 = new XYChart.Series<>();
       s3.setData(getSeries3());

@@ -1,6 +1,5 @@
 package basic.control.Test;
 
-import basic.example.RootController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -9,7 +8,7 @@ import javafx.stage.Stage;
 
 // UI : Root.fxml, AddForm.fxml(추가), BarChart.fxml(차트)
 //Control : RootController.java
-public class AppMainTest extends Application {
+public class AppMain extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {

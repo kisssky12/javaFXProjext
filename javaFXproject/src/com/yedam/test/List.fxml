@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane prefHeight="245.0" prefWidth="419.0"
+	xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
+	fx:controller="com.yedam.test.MemberController">
+	<children>
+		<TableView fx:id="tableView" prefHeight="200.0"
+			prefWidth="419.0">
+			<columns>
+				<TableColumn prefWidth="75.0" text="이름" />
+				<TableColumn prefWidth="55.0" text="나이" />
+				<TableColumn prefWidth="175.0" text="주소" />
+				<TableColumn prefWidth="55.0" text="키" />
+				<TableColumn prefWidth="55.0" text="몸무게" />
+			</columns>
+		</TableView>
+		<HBox alignment="CENTER" layoutX="101.0" layoutY="208.0"
+			prefHeight="45.0" prefWidth="218.0">
+			<children>
+				<Button fx:id="btnAdd1" text="추가" />
+				<Button fx:id="btnAdd2" text="종료" />
+			</children>
+		</HBox>
+	</children>
+</AnchorPane>

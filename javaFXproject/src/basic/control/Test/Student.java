@@ -4,7 +4,6 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 public class Student {
-	private SimpleStringProperty id;
 	private SimpleStringProperty name;
 	private SimpleIntegerProperty korean;
 	private SimpleIntegerProperty math;
@@ -15,14 +14,6 @@ public class Student {
 		this.korean = new SimpleIntegerProperty(korean);
 		this.math = new SimpleIntegerProperty(math);
 		this.english = new SimpleIntegerProperty(english);
-	}
-
-	public String getId() {
-		return this.id.get();
-	}
-
-	public void setId(String id) {
-		this.id.set(id);
 	}
 
 	public String getName() {
