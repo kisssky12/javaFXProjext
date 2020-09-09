@@ -53,7 +53,7 @@ public class MemberController implements Initializable {
 		tableView.setItems(list);
 		// 추가버튼.
 		btnAdd1.setOnAction(event -> handleBtnAdd1Action());
-//		btnAdd1.setOnAction(new EventHandler<ActionEvent>() {
+//		btnAdd1.setOnAction(new EventHandler<ActionEvent>() {s
 //			@Override
 //			public void handle(ActionEvent event) {
 //				handleBtnAdd1Action();
@@ -62,33 +62,36 @@ public class MemberController implements Initializable {
 		// 종료버튼.
 		btnAdd2.setOnAction(event -> Platform.exit());
 
-		// 모델 클래스에서 이름을 더블클릭하면 MemberList로 이동
-//		tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-//			@Override
-//			public void handle(MouseEvent arg0) {
-//				if(event.getClickCount() == 2) {
-//					handleDoubleClickAction(name);
-//				}
-//			}
-//			
-//		});
-//
-//	} // end of Initializable.
-//
-//	public void handleDoubleClickAction(String name) {
-//		Stage stage = new Stage(StageStyle.UTILITY);
-//		stage.initModality(Modality.WINDOW_MODAL);
-//		stage.initOwner(stage);
-//		stage.setTitle("회원정보");
-//		try {
-//			Parent tableView = FXMLLoader.load(getClass().getResource("MemberList.fxml"));
-//
-//		} catch (IOException e) {
-//			Scene s = new Scene(tableView);
-//			stage.setScene(s);
-//			stage.show();
-//			e.printStackTrace();
-//		}
+//		 모델 클래스에서 이름을 더블클릭하면 MemberList로 이동
+		tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			
+			@Override
+			public void handle(MouseEvent event) {
+				String name = tableView.getSelectionModel().getSelectedItem().getName();
+				if(event.getClickCount() == 1) {
+					handleOneClickAction(name);
+				}
+				
+			}
+			
+		});
+
+	} // end of Initializable.
+
+	public void handleOneClickAction(String name) {
+		Stage stage = new Stage(StageStyle.UTILITY);
+		stage.initModality(Modality.WINDOW_MODAL);
+		stage.initOwner(stage);
+		stage.setTitle("회원정보");
+		try {
+			Parent parent=FXMLLoader.load(getClass().getResource("MemberList.fxml"));
+			Scene s = new Scene(parent);
+			stage.setScene(s);
+			stage.show();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void handleBtnAdd1Action() {
