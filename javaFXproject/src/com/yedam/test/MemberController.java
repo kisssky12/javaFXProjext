@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,7 +28,7 @@ public class MemberController implements Initializable {
 	@FXML
 	TableView<Member> tableView;
 	@FXML
-	Button btnAdd1, btnAdd2;
+	Button btnAdd1, btnAdd2, btnLineChart;
 
 	ObservableList<Member> list;
 
@@ -63,36 +64,57 @@ public class MemberController implements Initializable {
 		btnAdd2.setOnAction(event -> Platform.exit());
 
 //		 모델 클래스에서 이름을 더블클릭하면 MemberList로 이동
+
 		tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			
+
 			@Override
 			public void handle(MouseEvent event) {
 				String name = tableView.getSelectionModel().getSelectedItem().getName();
-				if(event.getClickCount() == 1) {
-					handleOneClickAction(name);
+				if (event.getClickCount() == 2) {
+					handleDoubleClickAction(name);
 				}
-				
 			}
+
+			// DoubleClick 메소드.
+			private void handleDoubleClickAction(String name) {
+				Stage stage = new Stage(StageStyle.UTILITY);
+				stage.initModality(Modality.WINDOW_MODAL);
+				stage.initOwner(btnAdd1.getScene().getWindow());
 			
+				try {
+					Parent parent = FXMLLoader.load(getClass().getResource("MemberList.fxml"));
+					Scene scene = new Scene(parent);
+					stage.setScene(scene);
+					stage.show();
+					
+					Button btnLineChart = (Button) parent.lookup("#btnLineChart");
+					btnLineChart.setOnAction(new EventHandler<ActionEvent>() {
+
+						@Override
+						public void handle(ActionEvent event) {
+							Stage stage = new Stage(StageStyle.UTILITY);
+							stage.initModality(Modality.WINDOW_MODAL);
+//							stage.initOwner(btnLineChart.getScene().getWindow());
+//							
+							try {
+								Parent parent = FXMLLoader.load(getClass().getResource("MemberList.fxml"));
+								Scene scene = new Scene(parent);
+								stage.setScene(scene);
+								stage.show();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							
+						}
+					});
+
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		});
-
+		
 	} // end of Initializable.
-
-	public void handleOneClickAction(String name) {
-		Stage stage = new Stage(StageStyle.UTILITY);
-		stage.initModality(Modality.WINDOW_MODAL);
-		stage.initOwner(stage);
-		stage.setTitle("회원정보");
-		try {
-			Parent parent=FXMLLoader.load(getClass().getResource("MemberList.fxml"));
-			Scene s = new Scene(parent);
-			stage.setScene(s);
-			stage.show();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
 	public void handleBtnAdd1Action() {
 		Stage stage = new Stage(StageStyle.UTILITY);

@@ -81,6 +81,32 @@ public class RootController implements Initializable {
 				if(event.getClickCount() == 2) {
 					String selectedName = tableView.getSelectionModel().getSelectedItem().getName();
 					handleDoubleClickAction(selectedName);
+				
+					
+private void handleBtnChartAction() {
+Stage stage = new Stage(StageStyle.UTILITY);
+stage.initModality(Modality.WINDOW_MODAL);
+stage.initOwner(btnLineChart.getScene().getWindow());
+try {
+Parent parent = FXMLLoader.load(getClass().getResource("Chart.fxml"));
+Scene scene = new Scene(parent);
+stage.setScene(scene);
+stage.show();
+
+} catch (IOException e) {
+e.printStackTrace();
+	}
+}
+});					
+					
+					
+					
+					
+					
+					
+					
+					
+					
 					
 				}
 			}

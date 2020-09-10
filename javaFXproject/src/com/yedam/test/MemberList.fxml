@@ -10,7 +10,7 @@
 <AnchorPane prefHeight="363.0" prefWidth="388.0"
 	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
-		<TableView layoutX="14.0" layoutY="8.0" prefHeight="281.0"
+		<TableView layoutX="14.0" layoutY="8.0" prefHeight="254.0"
 			prefWidth="176.0">
 			<columns>
 				<TableColumn prefWidth="87.0" text="날짜" />
@@ -36,5 +36,7 @@
 				<Font size="36.0" />
 			</font>
 		</Text>
+		<Button fx:id="btnLineChart" layoutX="55.0" layoutY="268.0"
+			mnemonicParsing="false" text="운동그래프" />
 	</children>
 </AnchorPane>
