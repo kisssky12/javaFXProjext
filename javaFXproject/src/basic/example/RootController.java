@@ -2,8 +2,13 @@ package basic.example;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ResourceBundle;
 
+import basic.common.ConnectionDB;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -28,104 +33,177 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class RootController implements Initializable {
+
+	ObservableList<Student> list = FXCollections.observableArrayList();
 	@FXML
 	TableView<Student> tableView;
 	@FXML
-	Button btnAdd, btnBarChart;
-
-	ObservableList<Student> list;
+	Button btnAdd, btnBarChart, btnSelect, btnDelete;
 
 	Stage primaryStage;
+
+	StudentDAO dao = new StudentDAO();
 
 	public void setPrimaryStage(Stage primaryStage) {
 		this.primaryStage = primaryStage;
 	}
 
 	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) {
+	public void initialize(URL location, ResourceBundle resources) {
 
+		// 칼럼 가져와서 tableView랑 연결하기
 		TableColumn<Student, ?> tc = tableView.getColumns().get(0);
-		tc.setCellValueFactory(new PropertyValueFactory<>("name"));
+		tc.setCellValueFactory(new PropertyValueFactory<>("id"));
 
 		tc = tableView.getColumns().get(1);
-		tc.setCellValueFactory(new PropertyValueFactory<>("korean"));
+		tc.setCellValueFactory(new PropertyValueFactory<>("name"));
 
 		tc = tableView.getColumns().get(2);
-		tc.setCellValueFactory(new PropertyValueFactory<>("math"));
+		tc.setCellValueFactory(new PropertyValueFactory<>("korean"));
 
 		tc = tableView.getColumns().get(3);
+		tc.setCellValueFactoryontributor
+33 lines (27 sloc)  1.04 KB
+  
+package basic.example;
+// ui: Root.fxml(기본), AddForm.fxml(추가), BarChart.fxml(차트)
+// controller : RootController.java
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+
+public class AppMain extends Application {
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("Root.fxml"));
+		BorderPane root = loader.load();
+		
+		// 루트에 있는 컨트롤 가져옴 (정적메소드에서 가져올 수 없음) 컨트롤 타입을 리턴
+		RootController controller =  loader.getController(); 
+		// RootController에 있는 메소드나 필드 호출 가능
+		controller.setPrimaryStage(primaryStage);
+		
+		Scene scene = new Scene(root);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+		primaryStage.setResizable(false); // 화면 크기조절 불가능
+		primaryStage.setTitle("화면");
+		
+	}
+	public static void main(String[] args) {
+		launch(args);
+	}
+}(new PropertyValueFactory<>("math"));
+
+		tc = tableView.getColumns().get(4);
 		tc.setCellValueFactory(new PropertyValueFactory<>("english"));
 
-		// 성적저장.
-		list = FXCollections.observableArrayList();
+		// Student 타입 list 불러와서 list 값을 tableView에 넣기
 
-		tableView.setItems(list);
-
-		// 추가버튼.
-		btnAdd.setOnAction(new EventHandler<ActionEvent>() {
+		btnSelect.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
-			public void handle(ActionEvent arg0) {
-				handleBtnAddAction();
+			public void handle(ActionEvent event) {
+				tableView.setItems(list);
+				list = dao.selectDB();
 			}
 		});
 
-		// 차트버튼.
-		btnBarChart.setOnAction(e -> handleBtnChartAction());
-		
+		// 추가버튼
+		btnAdd.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				handleBtnAddAction();
+				tableView.setItems(list);
+			}
+		});
+		// 차트 버튼
+		btnBarChart.setOnAction(e -> {
+
+			handlebtnBarChartAction();
+		});
+
 		tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent event) {
-				System.out.println(event);
-				if(event.getClickCount() == 2) {
-					String selectedName = tableView.getSelectionModel().getSelectedItem().getName();
-					handleDoubleClickAction(selectedName);
-				
-					
-private void handleBtnChartAction() {
-Stage stage = new Stage(StageStyle.UTILITY);
-stage.initModality(Modality.WINDOW_MODAL);
-stage.initOwner(btnLineChart.getScene().getWindow());
-try {
-Parent parent = FXMLLoader.load(getClass().getResource("Chart.fxml"));
-Scene scene = new Scene(parent);
-stage.setScene(scene);
-stage.show();
-
-} catch (IOException e) {
-e.printStackTrace();
-	}
-}
-});					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
+				if (event.getClickCount() == 2) { // 2면 더블클릭
+					String seletedId = tableView.getSelectionModel().getSelectedItem().getId();
+					handleDoubleClickAction(seletedId);
 				}
 			}
-			
 		});
-		
-	}//end of initialize
-	
-	public void handleDoubleClickAction(String name) {
-		Stage stage = new Stage(StageStyle.UTILITY);
+
+		btnDelete.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+
+				Stage stage = new Stage(StageStyle.DECORATED.UTILITY);
+				stage.initModality(Modality.WINDOW_MODAL);
+				stage.initOwner(primaryStage);
+
+				AnchorPane ap = new AnchorPane();
+				ap.setPrefSize(210, 210);
+
+				Label str = new Label("삭제 하시겠습니까?");
+
+				str.setLayoutX(50);
+				str.setLayoutY(50);
+
+				Button btnOn = new Button("확인");
+				Button btnOff = new Button("취소");
+				btnOn.setLayoutX(75);
+				btnOn.setLayoutY(170);
+
+				btnOff.setLayoutX(120);
+				btnOff.setLayoutY(170);
+
+				btnOff.setOnAction(a -> {
+					stage.close();
+				});
+
+				btnOn.setOnAction(new EventHandler<ActionEvent>() {
+
+					@Override
+					public void handle(ActionEvent event) {
+
+						String id = tableView.getSelectionModel().selectedItemProperty().getValue().getId();
+						dao.deleteDB(id);
+						stage.close();
+					}
+				});
+
+				ap.getChildren().addAll(str, btnOn, btnOff);
+				Scene scene = new Scene(ap);
+				stage.setScene(scene);
+				stage.show();
+			}
+		});
+	}
+
+	public void handleDoubleClickAction(String id) {
+		Stage stage = new Stage(StageStyle.DECORATED.UTILITY);
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.initOwner(primaryStage);
-		
+
 		AnchorPane ap = new AnchorPane();
 		ap.setPrefSize(210, 230);
-		
-		Label lKorean, lMath, lEnglish;
-		TextField tName, tKorean, tMath, tEnglish;
-		
+
+		Label lName, lKorean, lMath, lEnglish;
+		TextField tId, tName, tKorean, tMath, tEnglish;
+		Button btnUpdate = new Button("수정");
+		btnUpdate.setLayoutX(85);
+		btnUpdate.setLayoutY(184);
+
+		lName = new Label("이름");
+		lName.setLayoutX(35);
+		lName.setLayoutY(50);
+
 		lKorean = new Label("국어");
 		lKorean.setLayoutX(35);
 		lKorean.setLayoutY(73);
@@ -137,195 +215,207 @@ e.printStackTrace();
 		lEnglish = new Label("영어");
 		lEnglish.setLayoutX(35);
 		lEnglish.setLayoutY(132);
-		
+
+		tId = new TextField();
+		tId.setPrefWidth(110);
+		tId.setLayoutX(72);
+		tId.setLayoutY(30);
+		tId.setText(id); // 네임 필드에 매개값 넣기
+		tId.setEditable(false); // 수정 불가
+
 		tName = new TextField();
 		tName.setPrefWidth(110);
 		tName.setLayoutX(72);
-		tName.setLayoutY(30);
-		
-		tName.setText(name);
-		tName.setEditable(false);
-		
+		tName.setLayoutY(50);
+
 		tKorean = new TextField();
 		tKorean.setPrefWidth(110);
 		tKorean.setLayoutX(72);
 		tKorean.setLayoutY(69);
-		
+
 		tMath = new TextField();
 		tMath.setPrefWidth(110);
 		tMath.setLayoutX(72);
 		tMath.setLayoutY(95);
-		
+
 		tEnglish = new TextField();
 		tEnglish.setPrefWidth(110);
 		tEnglish.setLayoutX(72);
 		tEnglish.setLayoutY(128);
-		
-		Button btnUpdate = new Button("수정");
-		btnUpdate.setLayoutX(85);
-		btnUpdate.setLayoutY(184);
-		
-//		Button btnClose = new Button("종료");
-//		btnClose.setLayoutX(100);
-//		btnClose.setLayoutY(184);
-//		
-//		btnClose.setOnAction(new EventHandler<ActionEvent>() {
-////			btnClose.setOnAction((e-> stage.close())); 람다식
-//			@Override
-//			public void handle(ActionEvent arg0) {
-//				stage.close();
-//			}
-//		});
-			
-			btnUpdate.setOnAction(new EventHandler<ActionEvent>() {
-				
-			@Override
-			public void handle(ActionEvent event) {
-				for(int i = 0; i< list.size(); i++)
-				if(list.get(i).getName().equals(name)) {
-					Student student = new Student(name, Integer.parseInt(tKorean.getText()),
-							                            Integer.parseInt(tMath.getText()),
-									                    Integer.parseInt(tEnglish.getText()));
-							list.set(i, student);
-							stage.close();
-				}
-			}
-		});
-		
-		//이름 기준으로 국어, 수학, 영어점수... 화면에 입력.
-		for(Student stu : list) {
-			if(stu.getName().equals(name)) {
-				tMath.setText(String.valueOf(stu.getMath()));
+
+		for (Student stu : list) {
+			if (stu.getId().equals(id)) {
+				// 값을 가져옴
+				tName.setText(stu.getName());
 				tKorean.setText(String.valueOf(stu.getKorean()));
+				tMath.setText(String.valueOf(stu.getMath())); // getMath는 숫자 setText는 문자
 				tEnglish.setText(String.valueOf(stu.getEnglish()));
 			}
 		}
-		
-		ap.getChildren().addAll(btnUpdate, tName, tKorean, tMath, tEnglish, lKorean, lMath, lEnglish);
-		
+
+		ap.getChildren().addAll(tName, tKorean, tMath, tEnglish, lKorean, lMath, lEnglish, btnUpdate, lName, tId);
+
 		Scene scene = new Scene(ap);
 		stage.setScene(scene);
 		stage.show();
-		
-	}
-	
-	public void handleBtnChartAction() {
-		Stage stage = new Stage(StageStyle.UTILITY);
-		stage.initModality(Modality.WINDOW_MODAL);
-		stage.initOwner(primaryStage);
-		
-		try {
-			Parent chart = FXMLLoader.load(getClass().getResource("BarChart.fxml"));
-			Scene scene = new Scene(chart);
-			stage.setScene(scene);
-			stage.show();
-			
-			// chart를 가지고 와서 series를 추가해야한다.
-			BarChart barChart = (BarChart) chart.lookup("#barChart");
-			
-			//국어 카테고리
-			XYChart.Series<String, Integer> seriesK = new XYChart.Series<String, Integer>();
-			seriesK.setName("국어");
-			
-			ObservableList<XYChart.Data<String, Integer>> koreanList = FXCollections.observableArrayList();
-			
-			for(int i=0; i<list.size(); i++) {
-				koreanList.add(new XYChart.Data<>(list.get(i).getName(), list.get(i).getKorean()));
-			}
-		
-			//수학 카테고리
-			XYChart.Series<String, Integer> seriesM = new XYChart.Series<String, Integer>();
-			seriesM.setName("수학");
-			
-			ObservableList<XYChart.Data<String, Integer>> mathList = FXCollections.observableArrayList();
 
-			for(int i=0; i<list.size(); i++) {
-				mathList.add(new XYChart.Data<>(list.get(i).getName(), list.get(i).getMath()));
-			}
-			
-			//영어 카테고리
-			XYChart.Series<String, Integer> seriesE = new XYChart.Series<String, Integer>();
-			seriesE.setName("영어");
-			
-			ObservableList<XYChart.Data<String, Integer>> englishList = FXCollections.observableArrayList();
-			
-			for(int i=0; i<list.size(); i++) {
-				englishList.add(new XYChart.Data<>(list.get(i).getName(), list.get(i).getEnglish()));
-			}
-			seriesK.setData(koreanList);
-			barChart.getData().add(seriesK);
-			
-			seriesM.setData(mathList);
-			barChart.getData().add(seriesM);
-			
-			seriesE.setData(englishList);
-			barChart.getData().add(seriesE);
-			
-			Button btnFormClose = (Button) chart.lookup("#btnClose");
-			btnFormClose.setOnAction(new EventHandler<ActionEvent>() {
-				
-				@Override
-				public void handle(ActionEvent arg0) {
-					stage.close();
+		btnUpdate.setOnAction(a -> {
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i).getId().equals(id)) {
+					Student student = new Student(id, tName.getText(), Integer.parseInt(tKorean.getText()),
+							Integer.parseInt(tMath.getText()), Integer.parseInt(tEnglish.getText()));
+
+					list.set(i, student);
+					dao.modfiyDB(student);
+					tableView.setItems(list);
 				}
-			});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			}
+			stage.close();
+		});
+
 	}
-	
-	// 추가화면 보여주는 작업.
+
+	// 추가화면 보여주는 작업 AddForm.fxml
 	public void handleBtnAddAction() {
 		Stage stage = new Stage(StageStyle.UTILITY);
-		stage.initModality(Modality.WINDOW_MODAL);
-		stage.initOwner(btnAdd.getScene().getWindow()); // 나중에 추가.. 설명.
+		stage.initModality(Modality.WINDOW_MODAL); // 모달폼(종속되는)으로 만들거야
+		stage.initOwner(btnAdd.getScene().getWindow()); // btnAdd의 신의 윈도우에 종속
 
 		try {
+			// Parent 컨테이너의 모든 타입 받을 수 있음
 			Parent parent = FXMLLoader.load(getClass().getResource("AddForm.fxml"));
-
 			Scene scene = new Scene(parent);
 			stage.setScene(scene);
 			stage.show();
+			// 추가화면 컨트롤 사용
+			Button btnFormAdd = (Button) parent.lookup("#btnFormAdd"); // 추가
+			Button btnFormCancel = (Button) parent.lookup("#btnFormCancel"); // 취소(내용 초기화하기)
 
-			// 추가화면의 컨트롤 사용하기.
-			Button btnFormAdd = (Button) parent.lookup("#btnFormAdd");
-			btnFormAdd.setOnAction(new EventHandler<ActionEvent>() {
-
-				@Override
-				public void handle(ActionEvent arg0) {
-					TextField txtName = (TextField) parent.lookup("#txtName");
-					TextField txtKorean = (TextField) parent.lookup("#txtKorean");
-					TextField txtMath = (TextField) parent.lookup("#txtMath");
-					TextField txtEnglish = (TextField) parent.lookup("#txtEnglish");
-
-					Student student = new Student(txtName.getText(), 
-							Integer.parseInt(txtKorean.getText()),
-							Integer.parseInt(txtMath.getText()), 
-							Integer.parseInt(txtEnglish.getText()));
-
-					list.add(student);
-
-					stage.close();
-				}
-			});
-
-			// 추가화면에 있는 취소버튼.
-			Button btnFormCancel = (Button) parent.lookup("#btnFormCancel");
 			btnFormCancel.setOnAction(e -> {
+				TextField txtId = (TextField) parent.lookup("#txtId");
 				TextField txtName = (TextField) parent.lookup("#txtName");
 				TextField txtKorean = (TextField) parent.lookup("#txtKorean");
 				TextField txtMath = (TextField) parent.lookup("#txtMath");
 				TextField txtEnglish = (TextField) parent.lookup("#txtEnglish");
 
-				txtName.clear();
-				txtKorean.clear();
-				txtMath.clear();
-				txtEnglish.clear();
+				stage.close();
+			});
 
+			btnFormAdd.setOnAction(new EventHandler<ActionEvent>() {
+
+				@Override
+				public void handle(ActionEvent event) {
+					// txtfield에 있는 값을 읽어와서
+					TextField txtId = (TextField) parent.lookup("#txtId");
+					TextField txtName = (TextField) parent.lookup("#txtName");
+					TextField txtKorean = (TextField) parent.lookup("#txtKorean");
+					TextField txtMath = (TextField) parent.lookup("#txtMath");
+					TextField txtEnglish = (TextField) parent.lookup("#txtEnglish");
+
+					// Student 생성자의 매개값으로 입력
+					Student student = new Student(txtId.getText(), txtName.getText(),
+							Integer.parseInt(txtKorean.getText()), Integer.parseInt(txtMath.getText()),
+							Integer.parseInt(txtEnglish.getText()));
+
+					// 위에 선언한 list에 방금 저장한 값을 넣음
+					
+					for (Student stu : list) {
+						if (stu.getId().equals(txtId.getText())) {
+							Stage stage = new Stage(StageStyle.DECORATED.UTILITY);
+							stage.initModality(Modality.WINDOW_MODAL);
+							stage.initOwner(primaryStage);
+
+							AnchorPane ap = new AnchorPane();
+							ap.setPrefSize(210, 210);
+
+							Label str = new Label("중복된 id 입니다.");
+							str.setLayoutX(50);
+							str.setLayoutY(50);
+
+							Button btnOff = new Button("확인");
+							btnOff.setLayoutX(120);
+							btnOff.setLayoutY(170);
+
+							btnOff.setOnAction(a -> {
+								stage.close();
+							});
+
+							ap.getChildren().addAll(str, btnOff);
+							Scene scene = new Scene(ap);
+							stage.setScene(scene);
+							stage.show();
+							break;
+						} else {
+							list.add(student);
+							dao.addDB(student);
+							break;
+						}
+					}
+					txtId.clear();
+					txtName.clear();
+					txtKorean.clear();
+					txtMath.clear();
+					txtEnglish.clear();
+				}
 			});
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+
+	// 차트버튼
+	// 폼 종속 경로?? 다르게 설정하기(메소드)
+	public void handlebtnBarChartAction() {
+		Stage stage = new Stage(StageStyle.UTILITY);
+		stage.initModality(Modality.WINDOW_MODAL);
+		stage.initOwner(primaryStage); // 메소드 이용
+
+		try {
+			Parent chart = FXMLLoader.load(getClass().getResource("BarChart.fxml"));
+			Scene scene = new Scene(chart);
+			stage.setScene(scene);
+			stage.show();
+
+			Button btnClose = (Button) chart.lookup("#btnClose");
+			btnClose.setOnAction(a -> {
+				stage.close();
+			});
+
+			// BarChar.fxml에 id가 barChar인걸 찾아서 barchart에 대입?
+			BarChart barChart = (BarChart) chart.lookup("#barChart");
+
+			XYChart.Series<String, Integer> seriesK = new XYChart.Series<>(); // 시리즈 셍성
+			seriesK.setName("국어");
+			ObservableList<XYChart.Data<String, Integer>> koreanList = FXCollections.observableArrayList(); // 리스트 생성
+			for (int i = 0; i < list.size(); i++) { // 리스트에 점수 담기
+				koreanList.add(new XYChart.Data<>(list.get(i).getName(), list.get(i).getKorean()));
+			}
+			seriesK.setData(koreanList); // 시리즈에 리스트 담기
+			barChart.getData().add(seriesK); // 차트에 시리즈 담기
+
+			XYChart.Series<String, Integer> seriesM = new XYChart.Series<>();
+			seriesM.setName("수학");
+			ObservableList<XYChart.Data<String, Integer>> mathList = FXCollections.observableArrayList();
+			for (int i = 0; i < list.size(); i++) {
+				mathList.add(new XYChart.Data<>(list.get(i).getName(), list.get(i).getMath()));
+			}
+			seriesM.setData(mathList);
+			barChart.getData().add(seriesM);
+
+			XYChart.Series<String, Integer> seriesE = new XYChart.Series<>();
+			seriesE.setName("영어");
+			ObservableList<XYChart.Data<String, Integer>> englishList = FXCollections.observableArrayList();
+			for (int i = 0; i < list.size(); i++) {
+				englishList.add(new XYChart.Data<>(list.get(i).getName(), list.get(i).getMath()));
+			}
+			seriesE.setData(englishList);
+			barChart.getData().add(seriesE);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+
 }
